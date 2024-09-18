@@ -1,0 +1,21 @@
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: always
+    command: ['redis-server', '--appendonly', "yes"]
+  
+  memcached:
+    image: bitnami/memcached:latest
+    ports:
+      - "11211:11211"
+    environment:
+      MEMCACHED_THREADS: 2
+    restart: always
+  
+volumes:
+  redis-data:
+    driver: local
