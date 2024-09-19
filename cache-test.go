@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand/v2"
+	"os"
 	"strings"
 
 	"github.com/redis/go-redis/v9"
@@ -11,11 +12,16 @@ import (
 
 const MAX_ENTRIES = 1000000
 const MAX_VALUES = 12000000
-const HSET_BUCKET_SIZE = 500
+const HSET_BUCKET_SIZE = 500 // if specify large number, the hash will still account for a big memory size
 
 func main() {
+	args := os.Args
+	if len(args) != 2 || (args[1] != "redis-getset" && args[1] != "redis-hset") {
+		fmt.Println("Specify a test: redis-getset | redis-hset")
+		os.Exit(1)
+	}
 
-	cacheOption := "redis-hset"
+	cacheOption := args[1]
 
 	ctx := context.Background()
 
@@ -31,7 +37,7 @@ func main() {
 		return
 	}
 
-	// Initialize a new pipeline
+	// Initialize a new redis pipeline
 	redisPipeline := redisClient.Pipeline()
 
 	for i := 1; i <= MAX_ENTRIES; i++ {
